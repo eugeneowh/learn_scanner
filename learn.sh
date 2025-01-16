@@ -4,23 +4,27 @@
 full=0
 logs=logs.txt
 target_port=-
+wordlist=/usr/share/dirb/wordlists/common.txt
 
 #getting flags
-while getopts t:p:l:f flag
+while getopts 't:p:l:u:fw:' flag
 do
-	case "${flag}" in
+	case ${flag} in
 		t) target_ip=${OPTARG};; #ip of target machine
 		p) target_port=${OPTARG};; #port of target machine
 		f) full=1;; #comprehensive scan (uses nmap -sC -sV -p- -T5)
 		l) logs=${OPTARG};; #file to save all command logs to
+		u) url=${OPTARG} ;; #specify url if ip addr is redirected
+		w) wordlist=${OPTARG};; #specify wordlist to use for ffuf
+		*) echo invalid flag ;;
 	esac
 done
 
 echo target-ip: $target_ip
 echo target-port: $target_port
 echo full: $full
+echo url: $url
 echo saving files to $logs "\n"
-
 
 #running nmap
 echo ==================STARTING NMAP SCAN==================== "\n"
@@ -60,8 +64,18 @@ while read -r line; do
 		;;
 		
 		http)
-		#do http scanningggg
-		echo bloop gobusterrrrrrr $port $service
+		#do http scanning
+		echo running ffuf http on $service with $wordlist
+		echo url is $url
+		[ $url=='' ] && addr=$target_ip || addr=$url
+		echo $addr
+		ffuf -u http://$url/FUZZ -w $wordlist || ffuf -u http://$target_ip/FUZZ -w $wordlist 2>&1 | tee ffuf_$target_ip
+		;;
+
+		https)
+		#do http scanning
+		echo running ffuf https on $service with $wordlist
+		ffuf -u http://$url/FUZZ -w $wordlist || ffuf -u http://$target_ip/FUZZ -w $wordlist   2>&1 | tee ffuf_$target_ip
 		;;
 		
 		*)
