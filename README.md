@@ -7,8 +7,13 @@ to automate enumeration, scoped for OSCP/CTFs
 - nmap log (nmap_<target_ip>)
 - to read nmap report and check which ports are open
 - to read open ports and check services
+- - http > ffuf
+  - https > ffuf
 
 
 ## TODO:
 - to run relevant scan on each service
 - multiple target addreses
+- ftp
+- ssh banner grabbing
+- ??? other common services
