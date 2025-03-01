@@ -30,7 +30,7 @@ echo saving files to $logs "\n"
 echo ==================STARTING NMAP SCAN==================== "\n"
 echo running nmap on $target_ip
 
-if [ $full==0 ]
+if [ $full == 0 ]
 	then #simple scan
 		echo command: nmap -p$target_port $target_ip "\n" >> $logs #Command log
 		nmap -p$target_port $target_ip 2>&1 | tee nmap_$target_ip
@@ -65,6 +65,8 @@ while read -r line; do
 		
 		http)
 		#do http scanning
+  		#TODO check if user want to add url at this point after nmap (automate by inserting redirect url? -- need to ask user to add to /etc/hosts first)
+  		#TODO do both subdomain fuzzing and directory fuzzing
 		echo running ffuf http on $service with $wordlist
 		echo url is $url
 		[ $url=='' ] && addr=$target_ip || addr=$url
